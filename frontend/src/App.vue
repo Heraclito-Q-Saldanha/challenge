@@ -1,9 +1,13 @@
-<script lang="ts">
-    import { RouterView } from 'vue-router'
+<script setup lang="ts">
+    import { RouterView } from 'vue-router';
+    import SideBar from '@/components/SideBar.vue';
 </script>
 
 <template>
   <main>
-    <RouterView />
+    <div class="flex w-screen h-screen">
+      <SideBar />
+      <RouterView />
+    </div>
   </main>
 </template>
