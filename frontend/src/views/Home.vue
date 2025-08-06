@@ -1,5 +1,10 @@
+<script setup lang="ts">
+    import Button from '@/volt/Button.vue';
+</script>
+
 <template>
-    <div class="flex w-screen h-scree">
-        foo
+    <div>
+        <h1>Your Application</h1>
+        <Button label="Hello World" />
     </div>
 </template>
