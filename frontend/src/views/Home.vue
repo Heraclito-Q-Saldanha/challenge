@@ -1,9 +1,24 @@
 <script setup lang="ts">
-    import TaskList from '@/components/TaskList.vue';
+    import Button from '@/volt/Button.vue';
+    import NewTaskModal from '@/components/NewTaskModal.vue';
+    import { ref } from 'vue';
+    
+    const newTask = ref(false);
+    const tasks = ["foo", "bar", "jujuba"];
 </script>
 
 <template>
-    <div class="flex flex-col w-screen h-screen p-8">
-        <TaskList />
+    <NewTaskModal v-if="newTask" :onClose="() => newTask = false" />
+    <div class="flex flex-col w-full h-full p-8">
+        <div class="w-full h-full rounded-2xl">
+            <div class="flex flex-row w-full justify-between">
+                <h1 class="font-semibold">Task Management</h1>
+                <Button icon="pi pi-plus" v-on:click="newTask = !newTask" label="Add Task" variant="text" :pt="{root: 'flex gap-1 items-center hover:cursor-pointer',label: 'dark:text-white text-black'}"></Button>
+            </div>
+            <div v-for="task in tasks">
+                {{ task }}
+            </div>
+        </div>
     </div>
 </template>
+

@@ -17,7 +17,7 @@
 </script>
 
 <template>
-    <div class="flex items-center flex-col w-18 h-full p-3 gap-4 bg-slate-100">
+    <div class="flex items-center flex-col w-18 h-full p-3 gap-4 bg-slate-100 dark:bg-zinc-950">
         <div class="flex w-full items-center flex-col">
             <Button icon="pi pi-user" class="w-full aspect-square" style="font-size: 1.5rem" />
         </div>
