@@ -5,7 +5,7 @@
     import ToggleSwitch from '@/volt/ToggleSwitch.vue';
     import { ref, watch } from 'vue';
 
-    let isDark = ref(false);
+    let isDark = ref(true);
 
     watch(isDark, (value) => {
         if(value){
