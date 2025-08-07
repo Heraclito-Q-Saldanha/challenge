@@ -7,6 +7,14 @@
 
     let isDark = ref(true);
 
+    function user(){
+        alert("TODO");
+    }
+
+    function logOut(){
+        alert("TODO");
+    }
+
     watch(isDark, (value) => {
         if(value){
             document.documentElement.classList.add("dark");
@@ -19,7 +27,7 @@
 <template>
     <div class="flex items-center flex-col w-18 h-full p-3 gap-4 bg-slate-100 dark:bg-zinc-950">
         <div class="flex w-full items-center flex-col">
-            <Button icon="pi pi-user" class="w-full aspect-square" style="font-size: 1.5rem" />
+            <Button :onclick="user" icon="pi pi-user" class="w-full aspect-square" style="font-size: 1.5rem" />
         </div>
         <Divider type="solid" />
         <div class="flex w-full h-full gap-2 items-center flex-col">
@@ -29,7 +37,7 @@
         <Divider type="solid" />
         <div class="flex w-full items-center flex-col">
             <ToggleSwitch v-model="isDark" />
-            <Button icon="pi pi-sign-out" variant="text" class="w-full aspect-square" style="font-size: 1.5rem" />
+            <Button :onclick="logOut" icon="pi pi-sign-out" variant="text" class="w-full aspect-square" style="font-size: 1.5rem" />
         </div>
     </div>
 </template>

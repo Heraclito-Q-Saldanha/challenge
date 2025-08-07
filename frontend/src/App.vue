@@ -5,7 +5,7 @@
 
 <template>
   <main>
-    <div class="flex w-screen h-screen dark:bg-zinc-900 dark:text-white">
+    <div class="flex flex-row w-screen h-screen dark:bg-zinc-900 dark:text-white">
       <SideBar />
       <RouterView />
     </div>

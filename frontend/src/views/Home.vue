@@ -33,8 +33,10 @@
     <NewTaskModal v-if="newTask" :onClose="() => newTask = false" />
     <div class="flex flex-col w-full h-full p-8">
         <div class="flex flex-col w-full h-full rounded-2xl gap-4">
-            <div class="flex flex-row w-full justify-between">
-                <h1 class="font-semibold">Task Management</h1>
+            <div class="flex flex-row w-full justify-end">
+                 <div class="absolute left-1/2 transform -translate-x-1/2">
+                    <h1 class="font-semibold">Task Management</h1>
+                </div>
                 <Button icon="pi pi-plus" v-on:click="newTask = !newTask" label="Add Task" variant="text" :pt="{root: 'flex gap-1 items-center hover:cursor-pointer',label: 'dark:text-white text-black'}"></Button>
             </div>
             <DataTable :value="tasks" pt:table="min-w-200">
