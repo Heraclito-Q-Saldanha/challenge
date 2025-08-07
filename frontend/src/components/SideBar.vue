@@ -1,7 +1,19 @@
 <script setup lang="ts">
     import Button from '@/volt/Button.vue';
     import Divider from 'primevue/divider';
-import SideBarButton from './SideBarButton.vue';
+    import SideBarButton from './SideBarButton.vue';
+    import ToggleSwitch from '@/volt/ToggleSwitch.vue';
+    import { ref, watch } from 'vue';
+
+    let isDark = ref(false);
+
+    watch(isDark, (value) => {
+        if(value){
+            document.documentElement.classList.add("dark");
+        }else{
+            document.documentElement.classList.remove("dark");
+        }
+    });
 </script>
 
 <template>
@@ -16,6 +28,7 @@ import SideBarButton from './SideBarButton.vue';
         </div>
         <Divider type="solid" />
         <div class="flex w-full items-center flex-col">
+            <ToggleSwitch v-model="isDark" />
             <Button icon="pi pi-sign-out" variant="text" class="w-full aspect-square" style="font-size: 1.5rem" />
         </div>
     </div>
