@@ -13,7 +13,9 @@ import {
     Legend,
     Tooltip
 } from 'chart.js';
+import ToastService from 'primevue/toastservice';
 import "./main.css";
+import { VueQueryPlugin } from 'vue-query';
 
 const app = createApp(App)
 
@@ -27,7 +29,10 @@ Chart.register(
     Legend,
     Tooltip
 );
-app.use(router)
+
+app.use(ToastService);
+app.use(VueQueryPlugin);
+app.use(router);
 app.use(PrimeVue, {
     unstyled: true
 });

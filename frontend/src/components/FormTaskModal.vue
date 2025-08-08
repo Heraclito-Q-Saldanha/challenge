@@ -7,6 +7,10 @@
     import InputNumber from "@/volt/InputNumber.vue";
     import AutoComplete from '@/volt/AutoComplete.vue';
     import { defineProps, ref } from 'vue';
+    import { createTaskRequest, type CreateTaskData } from "@/api/tasks";
+    import { useToast } from 'primevue/usetoast';
+
+    const toast = useToast();
 
     const props = defineProps<{
         onClose: () => void,
@@ -24,7 +28,28 @@
         { display: 'Done', value: 'DONE' }
     ];
 
-    const tags = ref([]);
+    const task = ref<CreateTaskData>({
+        title: "",
+        description: "",
+        priority: "LOW",
+        status: "TODO",
+        assignedTo: "",
+        tags: [],
+        dueDate: "",
+        estimatedHours: 0,
+    });
+
+    async function submit() {
+        try {
+            await createTaskRequest(task.value);
+            toast.add({ summary: "Task created", life: 3000, severity: "success" });
+            props.onClose();
+        } catch(err) {
+            toast.add({ summary: "Error creating task", severity: "error" });
+            console.error(err);
+        }
+    }
+
 </script>
 <template>
     <div class="fixed top-0 left-0 z-10 flex w-screen h-screen items-center justify-center bg-current/20">
@@ -33,38 +58,38 @@
                 <h1 class="font-semibold">Create New Task</h1>
                 <Button icon="pi pi-times" variant="text" :onclick="props.onClose" />
             </div>
-            <form class="flex flex-col w-full">
+            <form class="flex flex-col w-full" @submit.prevent="submit">
                 <div class="flex flex-col w-full">
                     <label>Title</label>
-                    <InputText placeholder="Task title" />
+                    <InputText v-model="task.title" placeholder="Task title" />
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Description</label>
-                    <Textarea placeholder="Task description" />
+                    <Textarea v-model="task.description" placeholder="Task description" />
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Due Date</label>
-                    <DatePicker showIcon iconDisplay="input" />
+                    <DatePicker v-model="task.dueDate" showIcon iconDisplay="input" />
                 </div>    
                 <div class="flex flex-col w-full">
                     <label>Estimated Hours</label>
-                    <InputNumber />
+                    <InputNumber v-model:value="task.estimatedHours" />
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Priority</label>
-                    <Select :options="priorities" optionLabel="display"></Select>
+                    <Select v-model="task.priority" :options="priorities" optionValue="value" optionLabel="display"></Select>
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Status</label>
-                    <Select :options="status" optionLabel="display"></Select>
+                    <Select v-model="task.status" :options="status" optionValue="value" optionLabel="display"></Select>
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Assigned To</label>
-                    <InputText placeholder="Signature"></InputText>
+                    <InputText v-model="task.assignedTo" placeholder="Signature"></InputText>
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Tags</label>
-                    <AutoComplete multiple fluid v-model="tags" :typeahead="false" />
+                    <AutoComplete v-model="task.tags" multiple fluid :typeahead="false" />
                 </div>
                 <div class="flex flex-col w-full mt-2">
                     <Button label="Save" type="submit" />
