@@ -35,8 +35,9 @@
             <SideBarButton icon="pi pi-chart-pie" path="/statistics" />
         </div>
         <Divider type="solid" />
-        <div class="flex w-full items-center flex-col">
+        <div class="flex flex-col w-full items-center">
             <ToggleSwitch v-model="isDark" />
+            <a href="https://github.com/Heraclito-Q-Saldanha/challenge" class="text-center pi pi-github w-full text-primary aspect-square mt-2" style="font-size: 2.25rem"></a>
             <Button :onclick="logOut" icon="pi pi-sign-out" variant="text" class="w-full aspect-square" style="font-size: 1.5rem" />
         </div>
     </div>
