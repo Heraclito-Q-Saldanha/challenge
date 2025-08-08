@@ -26,7 +26,7 @@ export class TasksService {
   }
 
   async findOne(id: string) {
-    return await this.db.select().from(schema.tasks).where(eq(schema.tasks.id, id));
+    return (await this.db.select().from(schema.tasks).where(eq(schema.tasks.id, id)))[0];
   }
 
   async update(id: string, updateTaskDto: UpdateTaskDto) {
@@ -34,7 +34,7 @@ export class TasksService {
       ...updateTaskDto,
       estimatedHours: updateTaskDto.estimatedHours?.toString()
     };
-    return await this.db.update(schema.tasks).set(value).where(eq(schema.tasks.id, id)).returning();
+    return (await this.db.update(schema.tasks).set(value).where(eq(schema.tasks.id, id)).returning())[0];
   }
 
   async remove(id: string) {

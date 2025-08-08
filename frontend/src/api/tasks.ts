@@ -5,9 +5,11 @@ export interface TaskData {
     description: string;
     priority: string;
     status: string;
+    tags: string[];
     assignedTo: string;
     dueDate: string;
     createdAt: string;
+    estimatedHours: number;
 }
 
 export interface CreateTaskData {
@@ -23,11 +25,15 @@ export interface CreateTaskData {
 
 export type EditTaskData = Partial<CreateTaskData>;
 
-export async function getTasksRequest(skip: number = 0, limit: number = 10): Promise<TaskData[]> {
-    const res = await fetch(`${API_URL}/tasks?skip=${skip}&limit=${limit}`, {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    });
+export async function getTasksRequest(skip: number = 0, limit: number = 12): Promise<TaskData[]> {
+    const res = await fetch(`${API_URL}/tasks?skip=${skip}&limit=${limit}`);
+    if (!res.ok)
+        throw res;
+    return res.json();
+}
+
+export async function getTaskRequest(id: string): Promise<TaskData> {
+    const res = await fetch(`${API_URL}/tasks/${id}`);
     if (!res.ok)
         throw res;
     return res.json();
@@ -45,8 +51,8 @@ export async function createTaskRequest(data: CreateTaskData): Promise<TaskData>
 }
 
 
-export async function editTaskRequest(data: EditTaskData): Promise<TaskData> {
-    const res = await fetch(`${API_URL}/tasks`, {
+export async function editTaskRequest(id: string, data: EditTaskData): Promise<TaskData> {
+    const res = await fetch(`${API_URL}/tasks/${id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data)

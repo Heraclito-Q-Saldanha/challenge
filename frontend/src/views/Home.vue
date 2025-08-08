@@ -17,7 +17,8 @@
     const confirm = useConfirm();
     const toast = useToast();
 
-    const newTask = ref(false);
+    const formTask = ref(false);
+    const editId = ref<string | undefined>();
     const skip = ref(0);
     const limit = 12;
     const totalRecords = computed(() => (data.value && data.value.length == limit) ? (skip.value + limit + 1) : skip.value + limit);
@@ -26,7 +27,13 @@
         return await getTasksRequest(skip.value, limit);
     }
 
-    async function del(id: string) {
+    function closeTaskModal(){
+        formTask.value = false;
+        editId.value = undefined;
+        refetch.value();
+    }
+    
+    async function deleteTask(id: string) {
         confirm.require({
             message: 'Are you sure you want to delete the task?',
             header: 'Confirmation',
@@ -46,9 +53,9 @@
         });
     }
 
-    function closeTaskModal(){
-        newTask.value = false;
-        refetch.value();
+    function editTaskModal(id: string){
+        formTask.value = true;
+        editId.value = id;
     }
 
     watch(totalRecords, () => {
@@ -58,7 +65,7 @@
 </script>
 
 <template>
-    <FormTaskModal v-if="newTask" :onClose="closeTaskModal" />
+    <FormTaskModal v-if="formTask" :onClose="closeTaskModal" :id="editId" />
     <div class="flex flex-col w-full h-full p-8">
         <div v-if="isError" class="flex flex-col items-center justify-center w-full h-full">
             <p>Error loading data</p>
@@ -73,7 +80,7 @@
                     <div class="absolute left-1/2 transform -translate-x-1/2">
                         <h1 class="font-semibold">Task Management</h1>
                     </div>
-                    <Button icon="pi pi-plus" v-on:click="newTask = !newTask" label="Add Task" variant="text" :pt="{root: 'flex gap-1 items-center hover:cursor-pointer',label: 'dark:text-white text-black'}"></Button>
+                    <Button icon="pi pi-plus" v-on:click="formTask = !formTask" label="Add Task" variant="text" :pt="{root: 'flex gap-1 items-center hover:cursor-pointer',label: 'dark:text-white text-black'}"></Button>
                 </div>
                 <DataTable :value="data" pt:table="min-w-200" class="h-full overflow-auto">
                     <Column field="title" header="Title"></Column>
@@ -98,12 +105,13 @@
                                     icon="pi pi-pencil"
                                     class="p-button-rounded p-button-text p-button-info" 
                                     aria-label="Edit"
+                                    v-on:click="editTaskModal(slotProps.data.id)"
                                 />
                                 <DangerButton 
                                     icon="pi pi-trash"
                                     class="p-button-rounded p-button-text p-button-danger" 
                                     aria-label="Delete"
-                                    v-on:click="del(slotProps.data.id)"
+                                    v-on:click="deleteTask(slotProps.data.id)"
                                 />
                             </div>
                         </template>

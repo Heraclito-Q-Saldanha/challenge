@@ -6,14 +6,15 @@
     import Textarea from '@/volt/Textarea.vue';
     import InputNumber from "@/volt/InputNumber.vue";
     import AutoComplete from '@/volt/AutoComplete.vue';
-    import { defineProps, ref } from 'vue';
-    import { createTaskRequest, type CreateTaskData } from "@/api/tasks";
+    import { computed, defineProps, onMounted, ref, watch } from 'vue';
+    import { createTaskRequest, editTaskRequest, getTaskRequest, type CreateTaskData } from "@/api/tasks";
     import { useToast } from 'primevue/usetoast';
 
     const toast = useToast();
 
-    const props = defineProps<{
-        onClose: () => void,
+    const { id, onClose } = defineProps<{
+        id?: string;
+        onClose: () => void;
     }>();
 
     const priorities = [
@@ -28,6 +29,8 @@
         { display: 'Done', value: 'DONE' }
     ];
 
+    const isEditing = computed(() => id != undefined);
+
     const task = ref<CreateTaskData>({
         title: "",
         description: "",
@@ -41,22 +44,32 @@
 
     async function submit() {
         try {
-            await createTaskRequest(task.value);
-            toast.add({ summary: "Task created", life: 3000, severity: "success" });
-            props.onClose();
+            if(isEditing.value) {
+                await editTaskRequest(id!, task.value);
+                toast.add({ summary: "Task edited", life: 3000, severity: "success" });
+            } else {
+                await createTaskRequest(task.value);
+                toast.add({ summary: "Task created", life: 3000, severity: "success" });
+            }
+            onClose();
         } catch(err) {
-            toast.add({ summary: "Error creating task", severity: "error" });
+            toast.add({ summary: "Error", severity: "error" });
             console.error(err);
         }
     }
-
+    
+    onMounted(async () => {
+        if(isEditing.value) {
+            task.value = await getTaskRequest(id!);
+        }
+    });
 </script>
 <template>
     <div class="fixed top-0 left-0 z-10 flex w-screen h-screen items-center justify-center bg-current/20">
         <div class="flex flex-col w-full h-full md:w-96 md:h-min bg-slate-100 rounded-lg p-6 gap-4 dark:bg-zinc-950">
             <div class="flex flex-row w-full justify-between">
-                <h1 class="font-semibold">Create New Task</h1>
-                <Button icon="pi pi-times" variant="text" :onclick="props.onClose" />
+                <h1 class="font-semibold">{{ isEditing ? "Edit Task" : "Create New Task" }}</h1>
+                <Button icon="pi pi-times" variant="text" :onclick="onClose" />
             </div>
             <form class="flex flex-col w-full" @submit.prevent="submit">
                 <div class="flex flex-col w-full">
@@ -73,7 +86,7 @@
                 </div>    
                 <div class="flex flex-col w-full">
                     <label>Estimated Hours</label>
-                    <InputNumber v-model:value="task.estimatedHours" />
+                    <InputNumber v-model="task.estimatedHours" />
                 </div>
                 <div class="flex flex-col w-full">
                     <label>Priority</label>
