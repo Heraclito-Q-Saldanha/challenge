@@ -1,4 +1,4 @@
-import { IsDate } from 'class-validator';
+import { IsDate, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum Priority {
@@ -18,6 +18,7 @@ export class CreateTaskDto {
     description: string;
     priority: Priority;
     status: Status;
+    @IsOptional()
     @Type(() => Date)
     @IsDate()
     dueDate: Date;

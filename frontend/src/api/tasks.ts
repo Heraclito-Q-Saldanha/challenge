@@ -17,7 +17,7 @@ export interface CreateTaskData {
     status: string;
     tags: string[];
     assignedTo: string;
-    dueDate: string;
+    dueDate?: string;
     estimatedHours: number
 }
 

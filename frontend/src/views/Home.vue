@@ -83,7 +83,7 @@
                     <Column field="assignedTo" header="Assigned To"></Column>
                     <Column field="dueDate" header="Due Date">
                         <template #body="slotProps">
-                            {{ formatDateUS(slotProps.data.dueDate) }}
+                            {{ slotProps.data.dueDate ? formatDateUS(slotProps.data.dueDate) : "" }}
                         </template>
                     </Column>
                     <Column field="createdAt" header="Created At">

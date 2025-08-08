@@ -35,7 +35,7 @@
         status: "TODO",
         assignedTo: "",
         tags: [],
-        dueDate: "",
+        dueDate: undefined,
         estimatedHours: 0,
     });
 
