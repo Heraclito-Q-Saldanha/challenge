@@ -55,3 +55,12 @@ export async function editTaskRequest(data: EditTaskData): Promise<TaskData> {
         throw res;
     return res.json();
 }
+
+export async function deleteTaskRequest(id: string): Promise<TaskData> {
+    const res = await fetch(`${API_URL}/tasks/${id}`, {
+        method: "DELETE"
+    });
+    if (!res.ok)
+        throw res;
+    return res.json();
+}

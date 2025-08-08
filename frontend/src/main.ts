@@ -1,3 +1,4 @@
+import "./main.css";
 import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
@@ -14,8 +15,8 @@ import {
     Tooltip
 } from 'chart.js';
 import ToastService from 'primevue/toastservice';
-import "./main.css";
 import { VueQueryPlugin } from 'vue-query';
+import ConfirmationService from 'primevue/confirmationservice';
 
 const app = createApp(App)
 
@@ -31,6 +32,7 @@ Chart.register(
 );
 
 app.use(ToastService);
+app.use(ConfirmationService);
 app.use(VueQueryPlugin);
 app.use(router);
 app.use(PrimeVue, {

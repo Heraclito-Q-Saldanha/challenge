@@ -1,32 +1,63 @@
 <script setup lang="ts">
     import Button from '@/volt/Button.vue';
-    import NewTaskModal from '@/components/FormTaskModal.vue';
+    import FormTaskModal from '@/components/FormTaskModal.vue';
     import DataTable from '@/volt/DataTable.vue';
     import Column from 'primevue/column';
     import { useQuery } from 'vue-query';
     import { computed, ref, watch } from 'vue';
-    import { getTasksRequest } from '@/api/tasks';
+    import { deleteTaskRequest, getTasksRequest } from '@/api/tasks';
     import Paginator from '@/volt/Paginator.vue';
     import Loading from '@/components/Loading.vue';
+    import DangerButton from '@/volt/DangerButton.vue';
+    import { useConfirm } from "primevue/useconfirm";
+    import { useToast } from 'primevue/usetoast';
 
     const { data, isLoading, isError, refetch } = useQuery('tasks', fetchData);
+    const confirm = useConfirm();
+    const toast = useToast();
 
     const newTask = ref(false);
     const skip = ref(0);
-    const limit = 15;
+    const limit = 12;
     const totalRecords = computed(() => (data.value && data.value.length == limit) ? (skip.value + limit + 1) : skip.value + limit);
 
     async function fetchData() {
         return await getTasksRequest(skip.value, limit);
     }
 
+    async function del(id: string) {
+        confirm.require({
+            message: 'Are you sure you want to delete the task?',
+            header: 'Confirmation',
+            rejectProps: {
+                label: 'Cancel',
+                severity: 'secondary',
+                outlined: true
+            },
+            acceptProps: {
+                label: 'Confirm'
+            },
+            accept: async () => {
+                await deleteTaskRequest(id);
+                toast.add({ summary: "Task deleted", life: 3000, severity: "success" });
+                refetch.value();
+            }
+        });
+    }
+
+    function closeTaskModal(){
+        newTask.value = false;
+        refetch.value();
+    }
+
     watch(totalRecords, () => {
         refetch.value();
     });
+    
 </script>
 
 <template>
-    <NewTaskModal v-if="newTask" :onClose="() => newTask = false" />
+    <FormTaskModal v-if="newTask" :onClose="closeTaskModal" />
     <div class="flex flex-col w-full h-full p-8">
         <div v-if="isError" class="flex flex-col items-center justify-center w-full h-full">
             <p>Error loading data</p>
@@ -51,6 +82,23 @@
                     <Column field="assignedTo" header="Assigned To"></Column>
                     <Column field="dueDate" header="Due Date"></Column>
                     <Column field="createdAt" header="Created At"></Column>
+                    <Column header="Actions" style="width: 150px;">
+                        <template #body="slotProps">
+                            <div class="flex gap-1">
+                                <Button 
+                                    icon="pi pi-pencil"
+                                    class="p-button-rounded p-button-text p-button-info" 
+                                    aria-label="Edit"
+                                />
+                                <DangerButton 
+                                    icon="pi pi-trash"
+                                    class="p-button-rounded p-button-text p-button-danger" 
+                                    aria-label="Delete"
+                                    v-on:click="del(slotProps.data.id)"
+                                />
+                            </div>
+                        </template>
+                    </Column>
                 </DataTable>
                 <Paginator v-model:first="skip" :rows="limit" :totalRecords="totalRecords" />
             </div>
