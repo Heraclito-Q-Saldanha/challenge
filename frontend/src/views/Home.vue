@@ -4,12 +4,25 @@
     import DataTable from '@/volt/DataTable.vue';
     import Column from 'primevue/column';
     import { useQuery } from 'vue-query';
-    import { ref } from 'vue';
+    import { computed, ref, watch } from 'vue';
     import { getTasksRequest } from '@/api/tasks';
+    import Paginator from '@/volt/Paginator.vue';
     import Loading from '@/components/Loading.vue';
 
-    const { data, isLoading, isError, refetch } = useQuery('tasks', getTasksRequest);
+    const { data, isLoading, isError, refetch } = useQuery('tasks', fetchData);
+
     const newTask = ref(false);
+    const skip = ref(0);
+    const limit = 15;
+    const totalRecords = computed(() => (data.value && data.value.length == limit) ? (skip.value + limit + 1) : skip.value + limit);
+
+    async function fetchData() {
+        return await getTasksRequest(skip.value, limit);
+    }
+
+    watch(totalRecords, () => {
+        refetch.value();
+    });
 </script>
 
 <template>
@@ -30,7 +43,7 @@
                     </div>
                     <Button icon="pi pi-plus" v-on:click="newTask = !newTask" label="Add Task" variant="text" :pt="{root: 'flex gap-1 items-center hover:cursor-pointer',label: 'dark:text-white text-black'}"></Button>
                 </div>
-                <DataTable :value="data" pt:table="min-w-200">
+                <DataTable :value="data" pt:table="min-w-200" class="h-full overflow-auto">
                     <Column field="title" header="Title"></Column>
                     <Column field="description" header="Description"></Column>
                     <Column field="priority" header="Priority"></Column>
@@ -39,6 +52,7 @@
                     <Column field="dueDate" header="Due Date"></Column>
                     <Column field="createdAt" header="Created At"></Column>
                 </DataTable>
+                <Paginator v-model:first="skip" :rows="limit" :totalRecords="totalRecords" />
             </div>
         </template>
     </div>

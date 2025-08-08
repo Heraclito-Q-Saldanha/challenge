@@ -17,8 +17,12 @@ export class TasksService {
     return await this.db.insert(schema.tasks).values(value).returning();
   }
 
-  async findAll() {
-    return await this.db.select().from(schema.tasks);
+  async findAll(skip: number, limit: number) {
+    return await this.db
+      .select()
+      .from(schema.tasks)
+      .offset(skip)
+      .limit(limit);
   }
 
   async findOne(id: string) {

@@ -23,8 +23,8 @@ export interface CreateTaskData {
 
 export type EditTaskData = Partial<CreateTaskData>;
 
-export async function getTasksRequest(): Promise<TaskData[]> {
-    const res = await fetch(`${API_URL}/tasks`, {
+export async function getTasksRequest(skip: number = 0, limit: number = 10): Promise<TaskData[]> {
+    const res = await fetch(`${API_URL}/tasks?skip=${skip}&limit=${limit}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });
