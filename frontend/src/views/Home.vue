@@ -11,6 +11,7 @@
     import DangerButton from '@/volt/DangerButton.vue';
     import { useConfirm } from "primevue/useconfirm";
     import { useToast } from 'primevue/usetoast';
+    import { formatDateUS, formatDateTimeUS} from "../utils.ts";
 
     const { data, isLoading, isError, refetch } = useQuery('tasks', fetchData);
     const confirm = useConfirm();
@@ -80,8 +81,16 @@
                     <Column field="priority" header="Priority"></Column>
                     <Column field="status" header="Status"></Column>
                     <Column field="assignedTo" header="Assigned To"></Column>
-                    <Column field="dueDate" header="Due Date"></Column>
-                    <Column field="createdAt" header="Created At"></Column>
+                    <Column field="dueDate" header="Due Date">
+                        <template #body="slotProps">
+                            {{ formatDateUS(slotProps.data.dueDate) }}
+                        </template>
+                    </Column>
+                    <Column field="createdAt" header="Created At">
+                        <template #body="slotProps">
+                            {{ formatDateTimeUS(slotProps.data.createdAt) }}
+                        </template>
+                    </Column>
                     <Column header="Actions" style="width: 150px;">
                         <template #body="slotProps">
                             <div class="flex gap-1">
