@@ -3,7 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { type DBConnectionType, DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from "../drizzle/schema";
-import { eq } from 'drizzle-orm';
+import { count, eq } from 'drizzle-orm';
 
 @Injectable()
 export class TasksService {
@@ -23,6 +23,23 @@ export class TasksService {
       .from(schema.tasks)
       .offset(skip)
       .limit(limit);
+  }
+
+  async countByPriority() {
+    const data = await this.db
+      .select({ priority: schema.tasks.priority, total: count(schema.tasks.priority) })
+      .from(schema.tasks)
+      .groupBy(schema.tasks.priority);
+
+    const low = data.find(c => c.priority == "LOW");
+    const medium = data.find(c => c.priority == "MEDIUM");
+    const high = data.find(c => c.priority == "HIGH");
+
+    return {
+      LOW: low?.total ?? 0,
+      MEDIUM: medium?.total ?? 0,
+      HIGH: high?.total ?? 0,
+    };
   }
 
   async findOne(id: string) {

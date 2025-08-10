@@ -3,7 +3,7 @@ export const API_URL = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
 export interface TaskData {
     title: string;
     description: string;
-    priority: string;
+    priority: Priority;
     status: string;
     tags: string[];
     assignedTo: string;
@@ -15,7 +15,7 @@ export interface TaskData {
 export interface CreateTaskData {
     title: string;
     description: string;
-    priority: string;
+    priority: Priority;
     status: string;
     tags: string[];
     assignedTo: string;
@@ -23,7 +23,11 @@ export interface CreateTaskData {
     estimatedHours: number
 }
 
+export type Priority = "LOW" | "MEDIUM" | "HIGH";
+
 export type EditTaskData = Partial<CreateTaskData>;
+
+export type CountTasksData = Record<Priority, number>;
 
 export async function getTasksRequest(skip: number = 0, limit: number = 12): Promise<TaskData[]> {
     const res = await fetch(`${API_URL}/tasks?skip=${skip}&limit=${limit}`);
@@ -66,6 +70,13 @@ export async function deleteTaskRequest(id: string): Promise<TaskData> {
     const res = await fetch(`${API_URL}/tasks/${id}`, {
         method: "DELETE"
     });
+    if (!res.ok)
+        throw res;
+    return res.json();
+}
+
+export async function countTasksRequest(): Promise<CountTasksData> {
+    const res = await fetch(`${API_URL}/tasks/count`);
     if (!res.ok)
         throw res;
     return res.json();

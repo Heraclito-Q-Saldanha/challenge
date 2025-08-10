@@ -9,27 +9,32 @@ export class TasksController {
   constructor(private readonly tasksService: TasksService) { }
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  async create(@Body() createTaskDto: CreateTaskDto) {
+    return await this.tasksService.create(createTaskDto);
   }
 
   @Get()
-  findAll(@Query() filterTaskDto: FilterTaskDto) {
-    return this.tasksService.findAll(filterTaskDto.skip, filterTaskDto.limit);
+  async findAll(@Query() filterTaskDto: FilterTaskDto) {
+    return await this.tasksService.findAll(filterTaskDto.skip, filterTaskDto.limit);
+  }
+
+  @Get('count')
+  async count() {
+    return await this.tasksService.countByPriority()
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.tasksService.findOne(id);
+  async findOne(@Param('id') id: string) {
+    return await this.tasksService.findOne(id);
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
-    return this.tasksService.update(id, updateTaskDto);
+  async update(@Param('id') id: string, @Body() updateTaskDto: UpdateTaskDto) {
+    return await this.tasksService.update(id, updateTaskDto);
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.tasksService.remove(id);
+  async remove(@Param('id') id: string) {
+    return await this.tasksService.remove(id);
   }
 }
