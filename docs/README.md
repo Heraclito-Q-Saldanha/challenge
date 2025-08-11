@@ -5,7 +5,7 @@
 
 ### production
 
-[dashboard](https://alvorada.site)
+[dashboard](https://challenge.smallauncher.com)
 
 ### documentation
 

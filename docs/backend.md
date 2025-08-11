@@ -23,7 +23,7 @@ npm run start:dev
 
 ### Endpoints
 
-Base URL: `https://api.alvorada.site/tasks` | `http://localhost:3000/tasks`
+Base URL: `https://api.challenge.smallauncher.com/tasks` | `http://localhost:3000/tasks`
 
 ---
 

@@ -1,11 +1,11 @@
-alvorada.site {
+challenge.smallauncher.com {
     handle {
         root * /data/www
         file_server
     }
 }
 
-api.alvorada.site {
+api.challenge.smallauncher.com {
 	handle {
         reverse_proxy backend:8080
     }
