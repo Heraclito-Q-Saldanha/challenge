@@ -1,0 +1,12 @@
+alvorada.site {
+    handle {
+        root * /data/www
+        file_server
+    }
+}
+
+api.alvorada.site {
+	handle {
+        reverse_proxy backend:8080
+    }
+}

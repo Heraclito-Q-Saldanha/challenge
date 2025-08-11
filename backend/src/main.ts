@@ -10,7 +10,7 @@ config({
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.SERVER_PORT ?? 8080);
 }
 
 bootstrap();
