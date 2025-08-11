@@ -32,6 +32,11 @@
         return { count, statistics };
     }
 
+    function clearFilters(){
+        selectedPriorities.value = null;
+        selectedDate.value = null;
+    }
+
     watch([selectedPriorities, selectedDate], () => {
         refetch.value();
     });
@@ -40,7 +45,7 @@
         if(!chartInstance)
             return;
 
-        const labels = data?.value.statistics?.map((s: any) => s.DAY) ?? [];
+        const labels = data?.value.statistics?.map((s:any) => s.DAY) ?? [];
         const low = data?.value.statistics?.map((s:any) => s.LOW) ?? [];
         const medium = data?.value.statistics?.map((s:any) => s.MEDIUM) ?? [];
         const high = data?.value.statistics?.map((s:any) => s.HIGH) ?? [];
@@ -135,15 +140,21 @@
             </div>
 
             <div class="flex min-w-0 min-h-0 flex-col w-full h-full items-center rounded-3xl bg-slate-100 dark:bg-zinc-950 gap-2 p-2">
-                <div class="flex items-center justify-center w-full flex-row bg-slate-100 dark:bg-zinc-950 gap-2 p-2 rounded-2xl">
-                    <div class="flex flex-col w-48">
-                        <label class="text-sm">Filter by Priority</label>
-                        <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All Priorities" />
+                <div class="flex items-center justify-end w-full flex-row bg-slate-100 dark:bg-zinc-950 p-2 h-20">
+                    <div class="flex absolute left-1/2 -translate-x-1/2 gap-2">
+                        <div class="flex flex-col w-48">
+                            <label class="text-sm">Filter by Priority</label>
+                            <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All Priorities" />
+                        </div>
+                        <div class="flex flex-col w-48">
+                            <label class="text-sm">Filter by Date</label>
+                            <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input" placeholder="All Dates" />
+                        </div>
                     </div>
-                    <div class="flex flex-col w-48">
-                        <label class="text-sm">Filter by Date</label>
-                        <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input" placeholder="All Dates" />
-                    </div>
+                    <button class="flex items-center gap-1 cursor-pointer p-2" :onclick="clearFilters">
+                        <i class="pi pi-times" />
+                        <p>Clear filters</p>
+                    </button>
                 </div>                
                 <canvas class="flex min-w-0 min-h-0 p-2" ref="chart" />
             </div>
