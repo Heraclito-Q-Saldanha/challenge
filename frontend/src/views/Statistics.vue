@@ -147,7 +147,7 @@
                             <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All Priorities" />
                         </div>
                         <div class="flex flex-col w-48">
-                            <label class="text-sm">Filter by Date</label>
+                            <label class="text-sm">Filter by Creation Date</label>
                             <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input" placeholder="All Dates" />
                         </div>
                     </div>

@@ -10,3 +10,12 @@ npm install
 npm run db:push
 npm run start:dev
 ```
+
+### stack
+
+* Nestjs
+* drizzle
+* docker/compose
+* Postgres
+* caddy
+* cloudflare

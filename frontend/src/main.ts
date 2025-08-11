@@ -8,7 +8,6 @@ import {
     registerables
 
 } from 'chart.js';
-import * as char from 'chart.js';
 import ToastService from 'primevue/toastservice';
 import { VueQueryPlugin } from 'vue-query';
 import ConfirmationService from 'primevue/confirmationservice';
