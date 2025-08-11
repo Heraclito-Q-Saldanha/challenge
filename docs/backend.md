@@ -14,8 +14,23 @@ npm run start:dev
 ### stack
 
 * Nestjs
-* drizzle
-* docker/compose
+* Drizzle
+* Docker/Compose
 * Postgres
-* caddy
-* cloudflare
+* Caddy
+* Cloudflare
+
+
+### Endpoints
+
+Base URL: `https://api.alvorada.site/tasks` | `http://localhost:3000/tasks`
+
+---
+
+- `POST /tasks` — Create a new task
+- `GET /tasks` — Get all tasks (supports `skip` and `limit` query params)
+- `GET /tasks/count` — Get count of tasks by priority (supports `startDate`, `endDate`, `priority` query params)
+- `GET /tasks/statistic` — Get statistics of tasks by day (supports `startDate`, `endDate`, `priority` query params)
+- `GET /tasks/:id` — Get a task by ID
+- `PATCH /tasks/:id` — Update a task by ID
+- `DELETE /tasks/:id` — Delete a task by ID

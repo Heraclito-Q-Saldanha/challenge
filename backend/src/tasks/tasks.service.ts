@@ -3,7 +3,7 @@ import { CreateTaskDto, Priority } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { type DBConnectionType, DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from "../drizzle/schema";
-import { and, count, eq, gte, lte, SQL, sql } from 'drizzle-orm';
+import { and, count, eq, gte, lte, sql } from 'drizzle-orm';
 
 @Injectable()
 export class TasksService {
