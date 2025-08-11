@@ -1,27 +1,92 @@
 <script setup lang="ts">
-    import { countTasksRequest } from '@/api/tasks';
+    import { countTasksRequest, getTaskStatisticsRequest } from '@/api/tasks';
     import { Chart } from 'chart.js';
     import { ref, watch } from 'vue';
     import { useQuery } from 'vue-query';
     import Loading from '@/components/Loading.vue';
+    import DatePicker from '@/volt/DatePicker.vue';
+    import Select from '@/volt/Select.vue';
+    import Button from '@/volt/Button.vue';
 
-    const { data, isLoading, isError, refetch } = useQuery('count', countTasksRequest);
+    const priorities = [
+        { display: "Low", value: "LOW" },
+        { display: "Medium", value: "MEDIUM" },
+        { display: "High", value: "HIGH" }
+    ];
+
+    const { data, isLoading, isError, refetch } = useQuery('count', getData);
 
     const chart = ref<HTMLCanvasElement>();
-    const chartInstance = ref<Chart>();
-    const high = [10, 20, 15, 30, 25, 40];
-    const medium = [5, 15, 10, 20, 30, 35];
-    const low = [8, 12, 18, 22, 28, 36];
+    let chartInstance: Chart;
+
+    const selectedPriorities = ref(null);
+    const selectedDate = ref(null);
+
+    async function getData() {
+        const startDate = selectedDate?.value?.[0];
+        const endDate = selectedDate?.value?.[1];
+
+        const statistics = await getTaskStatisticsRequest(startDate, endDate);
+        const count = await countTasksRequest(startDate, endDate);
+    
+        return { count, statistics };
+    }
+
+    watch([selectedPriorities, selectedDate], () => {
+        refetch.value();
+    });
+
+    watch(data, () => {
+        if(!chartInstance)
+            return;
+
+        const labels = data?.value.statistics?.map((s: any) => s.DAY) ?? [];
+        const low = data?.value.statistics?.map((s:any) => s.LOW) ?? [];
+        const medium = data?.value.statistics?.map((s:any) => s.MEDIUM) ?? [];
+        const high = data?.value.statistics?.map((s:any) => s.HIGH) ?? [];
+
+        chartInstance.data.labels = labels;
+        chartInstance.data.datasets = [
+            {
+                label: 'High Urgency',
+                data: high,
+                borderColor: 'red',
+                fill: false
+            },
+            {
+                label: 'Medium Urgency',
+                data: medium,
+                borderColor: 'orange',
+                fill: false
+            },
+            {
+                label: 'Low Urgency',
+                data: low,
+                borderColor: 'green',
+                fill: false
+            }
+        ];
+        
+        chartInstance.update();
+    });
 
     watch(chart, () => {
-        chartInstance.value = new Chart(chart.value!, {
+        if(!chart.value)
+            return;
+
+        const labels = data?.value.statistics?.map((s: any) => s.DAY) ?? [];
+        const low = data?.value.statistics?.map((s:any) => s.LOW) ?? [];
+        const medium = data?.value.statistics?.map((s:any) => s.MEDIUM) ?? [];
+        const high = data?.value.statistics?.map((s:any) => s.HIGH) ?? [];
+
+        chartInstance = new Chart(chart.value!, {
             type: 'line',
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
             },
             data: {
-                labels: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun'],
+                labels,
                 datasets: [
                     {
                         label: 'High Urgency',
@@ -44,8 +109,7 @@
                 ]
             },
         });
-        chartInstance.value.render();
-    });
+    })
 </script>
 <template>
     <div class="flex items-center min-w-0 min-h-0 flex-col w-full h-full p-8 gap-2">
@@ -60,17 +124,28 @@
             <h1 class="font-semibold">Statistics</h1>
             <div class="flex items-center justify-center flex-row w-full gap-2">
                 <div class="flex items-center justify-center w-32 h-20 rounded-2xl bg-slate-100 dark:bg-zinc-950 border-2 border-red-800">
-                    <p class="font-semibold">{{ data["HIGH"] }}</p>
+                    <p class="font-semibold">{{ data.count["HIGH"] }}</p>
                 </div>
                 <div class="flex items-center justify-center w-32 h-20 rounded-2xl bg-slate-100 dark:bg-zinc-950 border-2 border-yellow-800">
-                    <p class="font-semibold">{{ data["MEDIUM"] }}</p>
+                    <p class="font-semibold">{{ data.count["MEDIUM"] }}</p>
                 </div>
                 <div class="flex items-center justify-center w-32 h-20 rounded-2xl bg-slate-100 dark:bg-zinc-950 border-2 border-emerald-800">
-                    <p class="font-semibold">{{ data["LOW"] }}</p>
+                    <p class="font-semibold">{{ data.count["LOW"] }}</p>
                 </div>
             </div>
-            <div class="flex w-full h-full items-center">
-                <canvas class="flex p-2 rounded-3xl bg-slate-100 dark:bg-zinc-950" ref="chart" />
+
+            <div class="flex min-w-0 min-h-0 flex-col w-full h-full items-center rounded-3xl bg-slate-100 dark:bg-zinc-950 gap-2 p-2">
+                <div class="flex items-center justify-center w-full flex-row bg-slate-100 dark:bg-zinc-950 gap-2 p-2 rounded-2xl">
+                    <div class="flex flex-col w-48">
+                        <label class="text-sm">Filter by Priority</label>
+                        <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All" />
+                    </div>
+                    <div class="flex flex-col w-48">
+                        <label class="text-sm">Date Range</label>
+                        <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input"/>
+                    </div>
+                </div>                
+                <canvas class="flex min-w-0 min-h-0 p-2" ref="chart" />
             </div>
         </template>
     </div>

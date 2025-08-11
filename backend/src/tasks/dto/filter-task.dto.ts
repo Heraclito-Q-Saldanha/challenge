@@ -1,4 +1,4 @@
-import { IsOptional, IsNumber, Min, Max } from 'class-validator';
+import { IsOptional, IsNumber, Min, Max, IsDate } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class FilterTaskDto {
@@ -14,4 +14,14 @@ export class FilterTaskDto {
     @Min(1)
     @Max(100)
     limit: number = 15;
+
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate()
+    startDate: Date
+
+    @IsOptional()
+    @Type(() => Date)
+    @IsDate()
+    endDate: Date;
 }

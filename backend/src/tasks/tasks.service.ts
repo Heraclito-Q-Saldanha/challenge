@@ -3,7 +3,7 @@ import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { type DBConnectionType, DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from "../drizzle/schema";
-import { count, eq } from 'drizzle-orm';
+import { and, count, eq, gte, lte, SQL, sql } from 'drizzle-orm';
 
 @Injectable()
 export class TasksService {
@@ -25,10 +25,14 @@ export class TasksService {
       .limit(limit);
   }
 
-  async countByPriority() {
+  async countByPriority(startDate?: Date, endDate?: Date) {
     const data = await this.db
       .select({ priority: schema.tasks.priority, total: count(schema.tasks.priority) })
       .from(schema.tasks)
+      .where(and(...[
+        startDate ? gte(schema.tasks.createdAt, startDate) : undefined,
+        endDate ? lte(schema.tasks.createdAt, endDate) : undefined
+      ]))
       .groupBy(schema.tasks.priority);
 
     const low = data.find(c => c.priority == "LOW");
@@ -40,6 +44,23 @@ export class TasksService {
       MEDIUM: medium?.total ?? 0,
       HIGH: high?.total ?? 0,
     };
+  }
+
+  async generateStatistics(startDate?: Date, endDate?: Date) {
+    return await this.db
+      .select({
+        DAY: sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`,
+        LOW: sql<number>`COUNT(*) FILTER (WHERE ${schema.tasks.priority} = 'LOW')`,
+        MEDIUM: sql<number>`COUNT(*) FILTER (WHERE ${schema.tasks.priority} = 'MEDIUM')`,
+        HIGH: sql<number>`COUNT(*) FILTER (WHERE ${schema.tasks.priority} = 'HIGH')`,
+      })
+      .from(schema.tasks)
+      .where(and(...[
+        startDate ? gte(schema.tasks.createdAt, startDate) : undefined,
+        endDate ? lte(schema.tasks.createdAt, endDate) : undefined
+      ]))
+      .groupBy(sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`)
+      .orderBy(sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`);
   }
 
   async findOne(id: string) {

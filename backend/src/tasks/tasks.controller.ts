@@ -19,8 +19,13 @@ export class TasksController {
   }
 
   @Get('count')
-  async count() {
-    return await this.tasksService.countByPriority()
+  async count(@Query() filterTaskDto: FilterTaskDto) {
+    return await this.tasksService.countByPriority(filterTaskDto.startDate, filterTaskDto.endDate);
+  }
+
+  @Get('statistic')
+  async statistic(@Query() filterTaskDto: FilterTaskDto) {
+    return await this.tasksService.generateStatistics(filterTaskDto.startDate, filterTaskDto.endDate);
   }
 
   @Get(':id')

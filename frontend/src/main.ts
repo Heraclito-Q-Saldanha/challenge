@@ -5,31 +5,17 @@ import router from './router'
 import PrimeVue from 'primevue/config'
 import {
     Chart,
-    LineController,
-    LineElement,
-    PointElement,
-    LinearScale,
-    Title,
-    CategoryScale,
-    Legend,
-    Tooltip
+    registerables
+
 } from 'chart.js';
+import * as char from 'chart.js';
 import ToastService from 'primevue/toastservice';
 import { VueQueryPlugin } from 'vue-query';
 import ConfirmationService from 'primevue/confirmationservice';
 
 const app = createApp(App)
 
-Chart.register(
-    LineController,
-    LineElement,
-    PointElement,
-    LinearScale,
-    CategoryScale,
-    Title,
-    Legend,
-    Tooltip
-);
+Chart.register(...registerables);
 
 app.use(ToastService);
 app.use(ConfirmationService);

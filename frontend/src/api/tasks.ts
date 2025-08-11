@@ -75,8 +75,15 @@ export async function deleteTaskRequest(id: string): Promise<TaskData> {
     return res.json();
 }
 
-export async function countTasksRequest(): Promise<CountTasksData> {
-    const res = await fetch(`${API_URL}/tasks/count`);
+export async function countTasksRequest(startDate?: Date, endDate?: Date): Promise<CountTasksData> {
+    const res = await fetch(`${API_URL}/tasks/count?${startDate ? 'startDate=' + startDate.toISOString() : ""}&${endDate ? 'endDate=' + endDate.toISOString() : ""}`);
+    if (!res.ok)
+        throw res;
+    return res.json();
+}
+
+export async function getTaskStatisticsRequest(startDate?: Date, endDate?: Date): Promise<any> {
+    const res = await fetch(`${API_URL}/tasks/statistic?${startDate ? 'startDate=' + startDate.toISOString() : ""}&${endDate ? 'endDate=' + endDate.toISOString() : ""}`);
     if (!res.ok)
         throw res;
     return res.json();
