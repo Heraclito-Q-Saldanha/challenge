@@ -26,8 +26,8 @@
         const startDate = selectedDate?.value?.[0];
         const endDate = selectedDate?.value?.[1];
 
-        const statistics = await getTaskStatisticsRequest(startDate, endDate);
-        const count = await countTasksRequest(startDate, endDate);
+        const statistics = await getTaskStatisticsRequest(startDate, endDate, selectedPriorities.value ?? undefined);
+        const count = await countTasksRequest(startDate, endDate, selectedPriorities.value ?? undefined);
     
         return { count, statistics };
     }
@@ -138,11 +138,11 @@
                 <div class="flex items-center justify-center w-full flex-row bg-slate-100 dark:bg-zinc-950 gap-2 p-2 rounded-2xl">
                     <div class="flex flex-col w-48">
                         <label class="text-sm">Filter by Priority</label>
-                        <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All" />
+                        <Select size="small"v-model="selectedPriorities" :options="priorities" optionValue="value" optionLabel="display" placeholder="All Priorities" />
                     </div>
                     <div class="flex flex-col w-48">
-                        <label class="text-sm">Date Range</label>
-                        <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input"/>
+                        <label class="text-sm">Filter by Date</label>
+                        <DatePicker size="small" v-model="selectedDate" selectionMode="range" showIcon iconDisplay="input" placeholder="All Dates" />
                     </div>
                 </div>                
                 <canvas class="flex min-w-0 min-h-0 p-2" ref="chart" />

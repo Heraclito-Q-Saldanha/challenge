@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common';
-import { CreateTaskDto } from './dto/create-task.dto';
+import { CreateTaskDto, Priority } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 import { type DBConnectionType, DRIZZLE } from 'src/drizzle/drizzle.module';
 import * as schema from "../drizzle/schema";
@@ -25,13 +25,14 @@ export class TasksService {
       .limit(limit);
   }
 
-  async countByPriority(startDate?: Date, endDate?: Date) {
+  async countByPriority(startDate?: Date, endDate?: Date, priority?: Priority) {
     const data = await this.db
       .select({ priority: schema.tasks.priority, total: count(schema.tasks.priority) })
       .from(schema.tasks)
       .where(and(...[
         startDate ? gte(schema.tasks.createdAt, startDate) : undefined,
-        endDate ? lte(schema.tasks.createdAt, endDate) : undefined
+        endDate ? lte(schema.tasks.createdAt, endDate) : undefined,
+        priority ? eq(schema.tasks.priority, priority) : undefined
       ]))
       .groupBy(schema.tasks.priority);
 
@@ -46,7 +47,7 @@ export class TasksService {
     };
   }
 
-  async generateStatistics(startDate?: Date, endDate?: Date) {
+  async generateStatistics(startDate?: Date, endDate?: Date, priority?: Priority) {
     return await this.db
       .select({
         DAY: sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`,
@@ -57,7 +58,8 @@ export class TasksService {
       .from(schema.tasks)
       .where(and(...[
         startDate ? gte(schema.tasks.createdAt, startDate) : undefined,
-        endDate ? lte(schema.tasks.createdAt, endDate) : undefined
+        endDate ? lte(schema.tasks.createdAt, endDate) : undefined,
+        priority ? eq(schema.tasks.priority, priority) : undefined
       ]))
       .groupBy(sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`)
       .orderBy(sql`DATE_TRUNC('day', ${schema.tasks.createdAt})::date`);

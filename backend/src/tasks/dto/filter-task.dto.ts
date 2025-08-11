@@ -1,5 +1,6 @@
-import { IsOptional, IsNumber, Min, Max, IsDate } from 'class-validator';
+import { IsOptional, IsNumber, Min, Max, IsDate, IsEnum } from 'class-validator';
 import { Type } from 'class-transformer';
+import { Priority } from './create-task.dto';
 
 export class FilterTaskDto {
     @IsOptional()
@@ -18,10 +19,14 @@ export class FilterTaskDto {
     @IsOptional()
     @Type(() => Date)
     @IsDate()
-    startDate: Date
+    startDate?: Date
 
     @IsOptional()
     @Type(() => Date)
     @IsDate()
-    endDate: Date;
+    endDate?: Date;
+
+    @IsOptional()
+    @IsEnum(Priority)
+    priority?: Priority;
 }
